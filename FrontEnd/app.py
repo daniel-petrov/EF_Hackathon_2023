@@ -3,18 +3,26 @@ import pandas as pd
 import re
 from pdfminer.high_level import extract_text
 import sentence_transformers
+import numpy as np
 
+@st.cache_data
 def load_data():
+    """ 
+    Load job postings dataset
+    """
     df = pd.read_csv('../Data/data_job_posts.csv')
     df.dropna(inplace=True, subset=['JobDescription', 'JobRequirment', 'RequiredQual'])
     df.reset_index(drop=True, inplace=True)
     return df
 
-def load_model():
+@st.cache_data
+def load_embeddings():
     """ 
     Load pre-trained clustering model
     """
-    return 0
+    embeddings = pd.read_pickle('../Data/embeddings.pkl')
+    
+    return embeddings
 
 def parse_cv(cv_file):
     """ 
@@ -28,13 +36,15 @@ def parse_cv(cv_file):
     return embeddings
 
 
-def find_jobs(embedded_cv, model):
+def find_jobs(jobs, embedded_cv, embedded_jobs, n_jobs=10):
     """ 
     Find jobs based on CV embeddings
     """
-    data = []
-    df = pd.DataFrame(data)
-    return df
+    distances = np.linalg.norm(embedded_jobs - embedded_cv, axis=1)
+    closest = np.argsort(distances)[:n_jobs]
+    
+    return jobs.iloc[closest][['Title', 'JobDescription', 'JobRequirment', 'RequiredQual']]
+
 
 
 def show_homepage():
@@ -62,10 +72,11 @@ def show_homepage():
     if 'parsed_cv' in locals():
         if st.button('Find me a job!'):
             # Display top n jobs based off uploaded CV
-            model = load_model()
-            jobs = find_jobs(parsed_cv, model)
-            st.write(jobs.head(10))
-            st.write(parsed_cv)
+            jobs = load_data()
+            embedded_jobs = load_embeddings()
+
+            top_jobs = find_jobs(jobs, parsed_cv, embedded_jobs, n_jobs=10)
+            st.write(top_jobs)
 
 
 
