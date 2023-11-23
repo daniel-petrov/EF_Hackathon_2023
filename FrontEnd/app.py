@@ -10,7 +10,7 @@ def load_data():
     """ 
     Load job postings dataset
     """
-    df = pd.read_csv('../Data/data_job_posts.csv')
+    df = pd.read_pickle('../Data/data_job_posts.pkl')
     df.dropna(inplace=True, subset=['JobDescription', 'JobRequirment', 'RequiredQual'])
     df.reset_index(drop=True, inplace=True)
     return df
@@ -46,7 +46,6 @@ def find_jobs(jobs, embedded_cv, embedded_jobs, n_jobs=10):
     return jobs.iloc[closest][['Title', 'JobDescription', 'JobRequirment', 'RequiredQual']]
 
 
-
 def show_homepage():
     """ 
     Show main streamlit page
@@ -70,13 +69,18 @@ def show_homepage():
             st.warning('Please upload a PDF file')
 
     if 'parsed_cv' in locals():
-        if st.button('Find me a job!'):
+        max_jobs = 20
+        num_jobs = st.slider('How many jobs do you want to see?', 1, max_jobs, 5)
+        
+        if st.button(f'Suggest me {num_jobs} jobs!'):
             # Display top n jobs based off uploaded CV
             jobs = load_data()
             embedded_jobs = load_embeddings()
-
-            top_jobs = find_jobs(jobs, parsed_cv, embedded_jobs, n_jobs=10)
-            st.write(top_jobs)
+            
+            top_jobs = find_jobs(jobs, parsed_cv, embedded_jobs, n_jobs=max_jobs)
+            top_job_titles = top_jobs.iloc[:, 0].to_frame()
+            
+            st.dataframe(top_job_titles.head(num_jobs), hide_index=True)
 
 
 
