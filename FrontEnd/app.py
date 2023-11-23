@@ -2,14 +2,62 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-st.title('Job Postings Clustering')
-
 def load_data():
     df = pd.read_csv('../Data/data_job_posts.csv')
     df.dropna(inplace=True, subset=['JobDescription', 'JobRequirment', 'RequiredQual'])
     df.reset_index(drop=True, inplace=True)
     return df
 
-df = load_data()
-st.subheader('Data Sample')
-st.write(df.head())
+def load_model():
+    """ 
+    Load pre-trained clustering model
+    """
+    return 0
+
+def parse_cv(cv_file):
+    """ 
+    Parse CV and return embeddings
+    """
+    return 0
+
+def find_jobs(embedded_cv, model):
+    """ 
+    Find jobs based on CV embeddings
+    """
+    data = []
+    df = pd.DataFrame(data)
+    return df
+
+
+def show_homepage():
+    """ 
+    Show main streamlit page
+    """
+    st.title('Job Postings Clustering')
+    st.write('This web app is a demo for clustering job postings. It uses a dataset of job postings from different fields and clusters them into 10 categories.')
+    st.subheader('Project info')
+    st.write('''
+    - The dataset was taken from [Kaggle](https://www.kaggle.com/madhab/jobposts).
+    - The clustering model was trained using [Sentence Transformers](https://www.sbert.net/).
+    - The web app was built using [Streamlit](https://streamlit.io/).
+    - The source code can be found on [GitHub](https://github.com/daniel-petrov/EF_Hackathon_2023)
+             ''')
+
+    uploaded_cv = st.file_uploader('Upload your CV as a pdf 👇', type=["pdf"], accept_multiple_files=False)
+    if uploaded_cv:
+        if uploaded_cv.type == 'application/pdf':
+            parsed_cv = parse_cv(uploaded_cv)
+            st.success('CV uploaded successfully!')
+        else:
+            st.warning('Please upload a PDF file')
+
+    if 'parsed_cv' in locals():
+        if st.button('Find me a job!'):
+            # Display top n jobs based off uploaded CV
+            model = load_model()
+            jobs = find_jobs(parsed_cv, model)
+            st.write(jobs.head(10))
+
+
+
+show_homepage()
