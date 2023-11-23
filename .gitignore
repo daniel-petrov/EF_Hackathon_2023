@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Ignore will's test files
+CV_reader/testing/*
+
 # C extensions
 *.so
 
