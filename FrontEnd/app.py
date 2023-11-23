@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
+import re
+from pdfminer.high_level import extract_text
+import sentence_transformers
 
 def load_data():
     df = pd.read_csv('../Data/data_job_posts.csv')
@@ -18,7 +20,13 @@ def parse_cv(cv_file):
     """ 
     Parse CV and return embeddings
     """
-    return 0
+    raw_text = extract_text(cv_file)
+    formatted_text = re.sub(r'[^A-Za-z0-9]+', ' ', raw_text)
+    model = sentence_transformers.SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+    embeddings = model.encode(formatted_text, show_progress_bar=False)
+    
+    return embeddings
+
 
 def find_jobs(embedded_cv, model):
     """ 
@@ -57,6 +65,7 @@ def show_homepage():
             model = load_model()
             jobs = find_jobs(parsed_cv, model)
             st.write(jobs.head(10))
+            st.write(parsed_cv)
 
 
 
