@@ -6,6 +6,9 @@ __pycache__/
 # Ignore will's test files
 CV_reader/testing/*
 
+# Ignore API keys lol
+cv_generator/.env
+
 # C extensions
 *.so
 
