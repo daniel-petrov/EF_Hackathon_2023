@@ -10,7 +10,7 @@ CV_reader/testing/*
 cv_generator/.env
 
 # Don't upload CVS
-CVs/*
+CVs/
 
 # C extensions
 *.so
