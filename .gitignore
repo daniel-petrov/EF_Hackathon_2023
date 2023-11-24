@@ -9,6 +9,9 @@ CV_reader/testing/*
 # Ignore API keys lol
 cv_generator/.env
 
+# Don't upload CVS
+CVs/*
+
 # C extensions
 *.so
 
