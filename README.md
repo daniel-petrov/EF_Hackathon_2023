@@ -1,4 +1,4 @@
-# EF_Hackathon_2023
+# EF AI Hackathon 2023
 
 Overnight Cambridge Hackathon hosted by Entrepreneur First on 22 November 2023. Repository for [Daniel Petrov](https://github.com/daniel-petrov) and [Will Purvis](https://github.com/wejpurvis).
 
